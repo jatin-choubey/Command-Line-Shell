@@ -154,7 +154,9 @@ int removefile_action(string args)
         if (choice == 'y')
             cout << "File Deletion SUCCESSFUL !!! \n";
         else if (choice == 'n')
-            cout << "";
+            cout << "File Safe 🤗\n";
+        else 
+            cout << "Invlaid choice, File Safe 🤗\n";
     }
     else
         perror("ERROR MESSAGE ");
