@@ -32,6 +32,15 @@ using namespace std;
 typedef int (*action)(string);
 map<string /*command name*/, action /*action*/> commands;
 
+int isFileExistsAccess(string path)
+{
+    // Check for file existence
+    if (access(path.c_str(), F_OK) == -1)
+        return 0;
+
+    return 1;
+}
+
 // **************************  Present Working Directory  *************************
 int pwd_action(string args)
 {
@@ -101,11 +110,30 @@ int rmdir_action(string args)
     cout << "Enter the Location of the directory to be Deleted \n";
     cin >> dir_name;
 
-    int check = rmdir(dir_name.c_str());
-    if (check == 0)
+    if (isFileExistsAccess(dir_name))
     {
-        cout << "The Target Directory has been succesfully removed \n";
-        return 1;
+        char choice;
+        cout << "Are you sure you want to delete this File ?\n";
+        cout << "Press 'y' to Confirm or 'n' to Deny\n";
+        cin >> choice;
+        if (choice == 'y')
+        {
+            int check = rmdir(dir_name.c_str());
+            if (!check)
+            {
+                cout << "The Target Directory has been succesfully removed \n";
+                return 1;
+            }
+            else
+                perror("ERROR MESSAGE ");
+        }
+        else if (choice == 'n')
+            cout << "File Safe :) \n";
+        else
+        {
+            cout << "Invlaid Pick, Choose between 'y' or 'n'. File Safe \n";
+            rmdir_action(args);
+        }
     }
     else
         perror("ERROR MESSAGE ");
@@ -145,25 +173,30 @@ int removefile_action(string args)
     string file_name;
     cout << "Enter the File Location to be deleted \n";
     cin >> file_name;
-    char choice;
-    cout << "Are you sure you want to delete this File ?\n";
-    cout << "Press 'y' to Confirm or 'n' to Deny\n";
-    cin >> choice;
-    if (choice == 'y')
+    if (isFileExistsAccess(file_name))
     {
-        int check = remove(file_name.c_str());
-        if (!check)
-            cout << "File Deletion SUCCESSFUL !!! \n";
+        char choice;
+        cout << "Are you sure you want to delete this File ?\n";
+        cout << "Press 'y' to Confirm or 'n' to Deny\n";
+        cin >> choice;
+        if (choice == 'y')
+        {
+            int check = remove(file_name.c_str());
+            if (!check)
+                cout << "File Deletion SUCCESSFUL !!! \n";
+            else
+                perror("ERROR MESSAGE ");
+        }
+        else if (choice == 'n')
+            cout << "File Safe :) \n";
         else
-            perror("ERROR MESSAGE ");
+        {
+            cout << "Invlaid Pick, Choose between 'y' or 'n'. File Safe \n";
+            removefile_action(args);
+        }
     }
-    else if (choice == 'n')
-        cout << "File Safe :) \n";
     else
-    {
-        cout << "Invlaid Pick, Choose between 'y' or 'n'. File Safe \n";
-        removefile_action(args);
-    }
+        perror("ERROR MESSAGE ");
 }
 
 // **************************  Day, Date, Time **************************
@@ -245,6 +278,5 @@ int main()
             }
         }
     }
-
     return 0;
 }
