@@ -149,7 +149,7 @@ int removefile_action(string args)
     {
         char choice;
         cout << "Are you sure you want to delete this File ?\n";
-        cout << "Press 'Y' to Confirm or 'y' to Deny\n";
+        cout << "Press 'y' to Confirm or 'n' to Deny\n";
         cin >> choice;
         if (choice == 'y')
             cout << "File Deletion SUCCESSFUL !!! \n";
