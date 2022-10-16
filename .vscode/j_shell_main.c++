@@ -42,6 +42,7 @@ int pwd_action(string args)
     }
     else
         perror("ERROR MESSAGE ");
+    return 0;
 }
 
 // **************************  List  *****************************
@@ -144,22 +145,25 @@ int removefile_action(string args)
     string file_name;
     cout << "Enter the File Location to be deleted \n";
     cin >> file_name;
-    int check = remove(file_name.c_str());
-    if (!check)
+    char choice;
+    cout << "Are you sure you want to delete this File ?\n";
+    cout << "Press 'y' to Confirm or 'n' to Deny\n";
+    cin >> choice;
+    if (choice == 'y')
     {
-        char choice;
-        cout << "Are you sure you want to delete this File ?\n";
-        cout << "Press 'y' to Confirm or 'n' to Deny\n";
-        cin >> choice;
-        if (choice == 'y')
+        int check = remove(file_name.c_str());
+        if (!check)
             cout << "File Deletion SUCCESSFUL !!! \n";
-        else if (choice == 'n')
-            cout << "File Safe 🤗\n";
-        else 
-            cout << "Invlaid choice, File Safe 🤗\n";
+        else
+            perror("ERROR MESSAGE ");
     }
+    else if (choice == 'n')
+        cout << "File Safe :) \n";
     else
-        perror("ERROR MESSAGE ");
+    {
+        cout << "Invlaid Pick, Choose between 'y' or 'n'. File Safe \n";
+        removefile_action(args);
+    }
 }
 
 // **************************  Day, Date, Time **************************
