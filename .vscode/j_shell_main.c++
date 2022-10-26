@@ -1,4 +1,4 @@
-#ifdef WINDOWS
+#ifdef _WIN64
 #include <direct.h> // For Windows
 #define GetCurrentDir _getcwd
 #else
@@ -15,11 +15,10 @@
 #define cwd getcwd
 #define cd chdir
 #endif
-#include <map>
 
-// #include <bits/stdc++.h>
 #include <fstream>
 #include <sys/types.h>
+#include <map>
 #include <dirent.h>
 #include <iostream>
 #include <sys/stat.h>
@@ -31,15 +30,6 @@ using namespace std;
 
 typedef int (*action)(string);
 map<string /*command name*/, action /*action*/> commands;
-
-int isFileExistsAccess(string path)
-{
-    // Check for file existence
-    if (access(path.c_str(), F_OK) == -1)
-        return 0;
-
-    return 1;
-}
 
 // **************************  Present Working Directory  *************************
 int pwd_action(string args)
@@ -76,7 +66,6 @@ int ls_action(string args)
 int cd_action(string args)
 {
     char buff[PATH_MAX];
-    cout << "Enter the directory you want to Enter \n";
     string newdir;
     cin >> newdir;
     chdir(newdir.c_str());
@@ -92,14 +81,11 @@ int cd_action(string args)
 int mkdir_action(string args)
 {
     string dir_name;
-    cout << "Enter the name of the new directory \n";
     cin >> dir_name;
 
     int check;
     check = mkdir(dir_name.c_str());
-    if (!check)
-        cout << "Directory has been succesfully created \n";
-    else
+    if (check)
         perror("ERROR MESSAGE ");
 }
 
@@ -107,52 +93,29 @@ int mkdir_action(string args)
 int rmdir_action(string args)
 {
     string dir_name;
-    cout << "Enter the Location of the directory to be Deleted \n";
     cin >> dir_name;
 
-    if (isFileExistsAccess(dir_name))
+    int check = rmdir(dir_name.c_str());
+    if (check)
     {
-        char choice;
-        cout << "Are you sure you want to delete this File ?\n";
-        cout << "Press 'y' to Confirm or 'n' to Deny\n";
-        cin >> choice;
-        if (choice == 'y')
-        {
-            int check = rmdir(dir_name.c_str());
-            if (!check)
-            {
-                cout << "The Target Directory has been succesfully removed \n";
-                return 1;
-            }
-            else
-                perror("ERROR MESSAGE ");
-        }
-        else if (choice == 'n')
-            cout << "File Safe :) \n";
-        else
-        {
-            cout << "Invlaid Pick, Choose between 'y' or 'n'. File Safe \n";
-            rmdir_action(args);
-        }
-    }
-    else
         perror("ERROR MESSAGE ");
+    }
+    // else
+    //     cout << "Directory Removed Successfully \n";
 }
 
 // **************************  Rename a Directory ***********************
 int rename_action(string args)
 {
     string old_name;
-    cout << "Enter the Old name of the Directory \n";
+    cout << "Old Name :\n";
     cin >> old_name;
     string new_name;
-    cout << "Enter the new name of the directory \n";
+    cout << "New Name :\n";
     cin >> new_name;
-    int value = rename(old_name.c_str(), new_name.c_str());
+    int check = rename(old_name.c_str(), new_name.c_str());
 
-    if (!value)
-        cout << "Chnaged Success" << endl;
-    else
+    if (check)
         perror("ERROR MESSAGE ");
 }
 
@@ -161,42 +124,34 @@ int createfile_action(string args)
 {
     ofstream file;
     string name;
-    cout << "Enter the Loaction and the name of the file \n";
     cin >> name;
     file.open(name.c_str());
-    cout << "File Creation Successful !!!\n";
 }
 
-//  **************************  Delete File  *******************
+//  **************************  Delete a File  *******************
 int removefile_action(string args)
 {
     string file_name;
-    cout << "Enter the File Location to be deleted \n";
     cin >> file_name;
-    if (isFileExistsAccess(file_name))
-    {
-        char choice;
-        cout << "Are you sure you want to delete this File ?\n";
-        cout << "Press 'y' to Confirm or 'n' to Deny\n";
-        cin >> choice;
-        if (choice == 'y')
-        {
-            int check = remove(file_name.c_str());
-            if (!check)
-                cout << "File Deletion SUCCESSFUL !!! \n";
-            else
-                perror("ERROR MESSAGE ");
-        }
-        else if (choice == 'n')
-            cout << "File Safe :) \n";
-        else
-        {
-            cout << "Invlaid Pick, Choose between 'y' or 'n'. File Safe \n";
-            removefile_action(args);
-        }
-    }
-    else
+
+    int check = remove(file_name.c_str());
+    if (check)
         perror("ERROR MESSAGE ");
+    // else
+    //     cout << "File removed succesfully \n";
+}
+
+// **************************  File/Folder exists **************************
+int exists_action(string args)
+{
+    // Check for file existence
+    string path;
+    cin >> path;
+    int check = access(path.c_str(), F_OK);
+    if (!check)
+        cout << "File/Folder Exists on your FileSystem\n";
+    else
+        cout << "NO SUCH File/Folder on your FileSystem\n";
 }
 
 // **************************  Day, Date, Time **************************
@@ -220,16 +175,17 @@ int clrscr_action(string args)
 // **************************  Commands List/ HELP  ***********************
 int help_action(string args)
 {
-    cout << "J_pwd = The Current Working Directory \n\n";
-    cout << "J_ls = List of Sub Directories in the Current directory \n\n";
-    cout << "J_cd = To Change the Current Working Directory \n\n";
-    cout << "J_mkdir = To Make a new Directory \n\n";
-    cout << "J_rmdir = To Remove a particular Directory \n\n";
-    cout << "J_rename = To Rename a directory \n\n";
-    cout << "J_mkfile = To make a New File \n\n";
-    cout << "J_rmfile = To delete a File \n\n";
-    cout << "J_time = To display current Day, Date and Time \n\n";
-    cout << "J_clrscr = To Clear the Terminal \n\n";
+    cout << "J_pwd    => The Current Working Directory \n";
+    cout << "J_ls     => List of Sub Directories in the Current directory \n";
+    cout << "J_cd     => To Change the Current Working Directory \n";
+    cout << "J_mkdir  => To Make a new Directory \n";
+    cout << "J_rmdir  => To Remove a particular Directory \n";
+    cout << "J_rename => To Rename a directory \n";
+    cout << "J_mkfile => To Make a New File (txt, cpp, py, xls, pptx, pdf etcccc.)\n";
+    cout << "J_rmfile => To Delete a File \n";
+    cout << "J_exist  => To check if a particular file or folder Exits \n";
+    cout << "J_time   => To Display current Day, Date and Time \n";
+    cout << "J_clrscr => To Clear the Terminal \n";
 }
 
 int main()
@@ -256,6 +212,7 @@ int main()
     commands["J_rename"] = rename_action;
     commands["J_mkfile"] = createfile_action;
     commands["J_rmfile"] = removefile_action;
+    commands["J_exist"] = exists_action;
     commands["J_time"] = time_action;
     commands["J_clrscr"] = clrscr_action;
     commands["J_help"] = help_action;
