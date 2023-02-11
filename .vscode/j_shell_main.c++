@@ -1,5 +1,5 @@
-#ifdef _WIN64
-#include <direct.h> // For Windows
+#ifdef _WIN32
+#include <unistd.h> // For Windows
 #define GetCurrentDir _getcwd
 #else
 #include <unistd.h> // For Linux
@@ -18,18 +18,22 @@
 
 #include <fstream>
 #include <sys/types.h>
+#include <bits/stdc++.h>
+#include <unistd.h>
+#include <fstream>
 #include <map>
 #include <dirent.h>
 #include <iostream>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <limits.h>
+#include <ios>
 #include <process.h>
 #include <ctime>
 using namespace std;
 
 typedef int (*action)(string);
-map<string /*command name*/, action /*action*/> commands;
+map<string /** command name */, action /* action */> commands;
 
 // **************************  Present Working Directory  *************************
 int pwd_action(string args)
@@ -137,11 +141,40 @@ int removefile_action(string args)
     int check = remove(file_name.c_str());
     if (check)
         perror("ERROR MESSAGE ");
-    // else
-    //     cout << "File removed succesfully \n";
 }
 
-// **************************  File/Folder exists **************************
+// **************************  Move a File from one Location to Another *******************
+int move_action(string args)
+{
+    string oldname;
+    cout << "Enter the name of the file or the folder you want to change\n";
+    cin >> oldname;
+
+    string newname;
+    cout << "Enter the Destination\n";
+    cin >> newname;
+
+    if (rename(oldname.c_str(), newname.c_str()) != 0)
+        perror("ERROR MESSAGE ");
+    else
+        cout << "SUCCESS !!\n";
+}
+
+int read_action(string args)
+{
+    fstream file;
+    string word;
+    cout << "Enter the file name thru which u wanna read the contents \n";
+    string filename;
+    cin >> filename;
+    // fstream filename;
+    file.open(filename.c_str());
+    while (file >> word)
+    {
+        cout << word << " ";
+    }
+}
+
 int exists_action(string args)
 {
     // Check for file existence
@@ -152,6 +185,11 @@ int exists_action(string args)
         cout << "File/Folder Exists on your FileSystem\n";
     else
         cout << "NO SUCH File/Folder on your FileSystem\n";
+}
+
+int echo_action(string args)
+{
+    cout << cin.rdbuf();
 }
 
 // **************************  Day, Date, Time **************************
@@ -175,17 +213,20 @@ int clrscr_action(string args)
 // **************************  Commands List/ HELP  ***********************
 int help_action(string args)
 {
-    cout << "J_pwd    => The Current Working Directory \n";
-    cout << "J_ls     => List of Sub Directories in the Current directory \n";
-    cout << "J_cd     => To Change the Current Working Directory \n";
-    cout << "J_mkdir  => To Make a new Directory \n";
-    cout << "J_rmdir  => To Remove a particular Directory \n";
-    cout << "J_rename => To Rename a directory \n";
-    cout << "J_mkfile => To Make a New File (txt, cpp, py, xls, pptx, pdf etcccc.)\n";
-    cout << "J_rmfile => To Delete a File \n";
-    cout << "J_exist  => To check if a particular file or folder Exits \n";
-    cout << "J_time   => To Display current Day, Date and Time \n";
-    cout << "J_clrscr => To Clear the Terminal \n";
+    cout << "1)  J_pwd          The Current Working Directory \n";
+    cout << "2)  J_ls           List of Sub Directories in the Current directory \n";
+    cout << "3)  J_cd           To Change the Current Working Directory \n";
+    cout << "4)  J_mkdir        To Make a new Directory \n";
+    cout << "5)  J_rmdir        To Remove a particular Directory \n";
+    cout << "6)  J_rename       To Rename a directory \n";
+    cout << "7)  J_mkfile       To Make a New File (txt, cpp, py, xls, pptx, pdf etcccc.)\n";
+    cout << "8)  J_rmfile       To Delete a File \n";
+    cout << "9)  J_move         To Move a file from one location to another\n";
+    cout << "10) J_read         To Read each and every word from a file\n";
+    cout << "11) J_echo         To print the Text on the terminal as it is\n";
+    cout << "12) J_exist        To check if a particular file or folder Exits \n";
+    cout << "13) J_time         To Display current Day, Date and Time \n";
+    cout << "14) J_clrscr       To Clear the Terminal \n";
 }
 
 int main()
@@ -212,7 +253,10 @@ int main()
     commands["J_rename"] = rename_action;
     commands["J_mkfile"] = createfile_action;
     commands["J_rmfile"] = removefile_action;
+    commands["J_move"] = move_action;
+    commands["J_read"] = read_action;
     commands["J_exist"] = exists_action;
+    commands["J_echo"] = echo_action;
     commands["J_time"] = time_action;
     commands["J_clrscr"] = clrscr_action;
     commands["J_help"] = help_action;
