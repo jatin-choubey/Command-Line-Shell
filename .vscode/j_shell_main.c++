@@ -270,13 +270,9 @@ int main()
         else
         {
             if (commands.find(cmd) != commands.end())
-            {
                 commands[cmd]("");
-            }
             else
-            {
                 cout << "No Such Command in the J_Shell, Many more commands to come soon\n";
-            }
         }
     }
     return 0;
