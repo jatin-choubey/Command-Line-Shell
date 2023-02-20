@@ -213,20 +213,21 @@ int clear_action(string args)
 // **************************  Commands List/ HELP  ***********************
 int help_action(string args)
 {
-    cout << "1)  J_pwd          The Current Working Directory \n";
-    cout << "2)  J_ls           List of Sub Directories in the Current directory \n";
-    cout << "3)  J_cd           To Change the Current Working Directory \n";
-    cout << "4)  J_mkdir        To Make a new Directory \n";
-    cout << "5)  J_rmdir        To Remove a particular Directory \n";
-    cout << "6)  J_rename       To Rename a directory \n";
+    cout << "1)  J_pwd          The Current Working Directory\n";
+    cout << "2)  J_ls           List of Sub Directories in the Current directory\n";
+    cout << "3)  J_cd           To Change the Current Working Directory\n";
+    cout << "4)  J_mkdir        To Make a new Directory\n";
+    cout << "5)  J_rmdir        To Remove a particular Directory\n";
+    cout << "6)  J_rename       To Rename a directory\n";
     cout << "7)  J_mkfile       To Make a New File (txt, cpp, py, xls, pptx, pdf etcccc.)\n";
-    cout << "8)  J_rmfile       To Delete a File \n";
+    cout << "8)  J_rmfile       To Delete a File\n";
     cout << "9)  J_move         To Move a file from one location to another\n";
     cout << "10) J_read         To Read each and every word from a file\n";
     cout << "11) J_echo         To print the Text on the terminal as it is\n";
-    cout << "12) J_exist        To check if a particular file or folder Exits \n";
-    cout << "13) J_time         To Display current Day, Date and Time \n";
-    cout << "14) J_clear        To Clear the Terminal \n";
+    cout << "12) J_exist        To check if a particular file or folder Exits\n";
+    cout << "13) J_time         To Display current Day, Date and Time\n";
+    cout << "14) J_clear        To Clear the Terminal\n";
+    cout << "15) J_help         To display the entire list of Commands\n";
 }
 
 int main()
