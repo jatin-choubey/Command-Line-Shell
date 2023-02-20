@@ -205,7 +205,7 @@ int time_action(string args)
 }
 
 // **************************  Clear Terminal ***********************
-int clrscr_action(string args)
+int clear_action(string args)
 {
     system("CLS");
 }
@@ -226,7 +226,7 @@ int help_action(string args)
     cout << "11) J_echo         To print the Text on the terminal as it is\n";
     cout << "12) J_exist        To check if a particular file or folder Exits \n";
     cout << "13) J_time         To Display current Day, Date and Time \n";
-    cout << "14) J_clrscr       To Clear the Terminal \n";
+    cout << "14) J_clear        To Clear the Terminal \n";
 }
 
 int main()
@@ -258,7 +258,7 @@ int main()
     commands["J_exist"] = exists_action;
     commands["J_echo"] = echo_action;
     commands["J_time"] = time_action;
-    commands["J_clrscr"] = clrscr_action;
+    commands["J_clear"] = clear_action;
     commands["J_help"] = help_action;
     while (true)
     {
