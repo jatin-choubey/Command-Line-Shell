@@ -7,6 +7,7 @@
 🔑 J_help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To display to list of all the present commands  
 🔑 J_pwd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Current Working Directory  
 🔑 J_ls&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List of Sub Directories in the Current directory  
+🔑 J_lstype&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To display the list of items of sepcific type  
 🔑 J_cd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To Change the Current Working Directory  
 🔑 J_mkdir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To Make a new Directory  
 🔑 J_rmdir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To Remove a particular Directory  
