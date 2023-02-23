@@ -14,7 +14,7 @@
 🔑 J_rename&nbsp;&nbsp;&nbsp;To Rename a directory  
 🔑 J_mkfile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To Make a New File (txt, cpp, py, xls, pptx, pdf etcccc.)  
 🔑 J_rmfile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To Delete a File  
-🔑 J_move&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To Move a file from one location to another  
+🔑 J_copy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To Move a file from one location to another  
 🔑 J_read&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To Read each and every word from a file  
 🔑 J_echo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To print the Text on the terminal as it is  
 🔑 J_exist&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To check if a particular file or folder Exits  
