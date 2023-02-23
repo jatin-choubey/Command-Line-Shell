@@ -194,7 +194,8 @@ int removefile_action(string args)
         perror("ERROR MESSAGE ");
 }
 
-int move_action(string args)
+// ***************************  Copy the contents of a File   ******************************
+int copy_action(string args)
 {
     string oldname;
     cout << "Old Name \n";
@@ -209,6 +210,7 @@ int move_action(string args)
     cout << "File copied successfully";
 }
 
+// ***************************  Read through the contents of the file  **********************
 int read_action(string args)
 {
     fstream file;
@@ -299,7 +301,7 @@ int main()
     commands["J_rename"] = rename_action;
     commands["J_mkfile"] = createfile_action;
     commands["J_rmfile"] = removefile_action;
-    commands["J_mv"] = move_action;
+    commands["J_copy"] = copy_action;
     commands["J_read"] = read_action;
     commands["J_exist"] = exists_action;
     // commands["J_memory"] = memory_action;
