@@ -3,6 +3,7 @@
 #define GetCurrentDir _getcwd
 #else
 #include <unistd.h>
+#include <sys/sysinfo.h>
 #define GetCurrentDir getcwd
 #endif
 
@@ -16,15 +17,12 @@
 #define cd chdir
 #endif
 
-// #pragma comment( lib, "psapi.lib" )
-// #if defined(_WIN32)
 #include <windows.h>
 #include <psapi.h>
-
 #include <fstream>
 #include <sys/types.h>
-// #include <bits/stdc++.h>
 #include <unistd.h>
+#include <algorithm>
 #include <fstream>
 #include <map>
 #include <dirent.h>
@@ -33,20 +31,21 @@
 #include <sys/types.h>
 #include <limits.h>
 #include <ios>
-// #include <proc/readproc.h>
+#include <vector>
 #include <process.h>
 #include <ctime>
 #include <iomanip>
 using namespace std;
 
 typedef int (*action)(string);
-map<string /*command name*/, action /*action*/> commands;
+// command , task
+map<string, action> commands;
 
 // **************************  Present Working Directory  *************************
 int pwd_action(string args)
 {
     char pwd[PATH_MAX];
-    if (_getcwd(pwd, sizeof(pwd)) != NULL)
+    if (cwd(pwd, sizeof(pwd)) != NULL)
     {
         cout << "Current working directory : " << pwd << "\n";
     }
@@ -79,6 +78,21 @@ int ls_action(string args)
         cout << "\n";
         closedir(dr);
     }
+}
+
+// **************************  Change Directory  *****************************
+int cd_action(string args)
+{
+    char changed_dir[PATH_MAX];
+    string newdir;
+    cin >> newdir;
+    cd(newdir.c_str());
+    if (cwd(changed_dir, sizeof(changed_dir)) == NULL)
+    {
+        perror("ERROR MESSAGE ");
+        return 1;
+    }
+    cout << "Current Working Directory Changed to ---> " << changed_dir << "\n";
 }
 
 // **************************  To print the List of Files, Directories and Links  *****************************
@@ -115,27 +129,38 @@ int ls_type_action(string args)
     }
 }
 
-// **************************  Change Directory  *****************************
-int cd_action(string args)
-{
-    char changed_dir[PATH_MAX];
-    string newdir;
-    cin >> newdir;
-    _chdir(newdir.c_str());
-    if (_getcwd(changed_dir, sizeof(changed_dir)) == NULL)
-    {
-        perror("ERROR MESSAGE ");
-        return 1;
-    }
-    cout << "Current Working Directory Changed to ---> " << changed_dir << "\n";
-}
+// ************************** RAM ************************
 
-// **************************  ECHO    *********************
-int echo_action(string args)
+int memory_action(string args)
 {
-    string text;
-    cin >> text;
-    cout << text << "\n";
+    double totalMemory = 0;
+    double occupiedMemory = 0;
+    double availableMemory = 0;
+
+#ifdef _WIN32
+    MEMORYSTATUSEX memoryStatus;
+    memoryStatus.dwLength = sizeof(memoryStatus);
+    if (GlobalMemoryStatusEx(&memoryStatus))
+    {
+        totalMemory = static_cast<double>(memoryStatus.ullTotalPhys) / (1024 * 1024); // Convert to MB
+        occupiedMemory = static_cast<double>(memoryStatus.ullTotalPhys - memoryStatus.ullAvailPhys) / (1024 * 1024);
+        availableMemory = static_cast<double>(memoryStatus.ullAvailPhys) / (1024 * 1024);
+    }
+#else
+    struct sysinfo sysInfo;
+    if (sysinfo(&sysInfo) == 0)
+    {
+        totalMemory = static_cast<double>(sysInfo.totalram * sysInfo.mem_unit) / (1024 * 1024); // Convert to MB
+        occupiedMemory = static_cast<double>((sysInfo.totalram - sysInfo.freeram) * sysInfo.mem_unit) / (1024 * 1024);
+        availableMemory = static_cast<double>(sysInfo.freeram * sysInfo.mem_unit) / (1024 * 1024);
+    }
+#endif
+    cout << "Memory Information:\n";
+    cout << "Total RAM: " << totalMemory << " MB\n";
+    cout << "Occupied RAM: " << occupiedMemory << " MB\n";
+    cout << "Available RAM: " << availableMemory << " MB\n";
+
+    return 0;
 }
 
 // **************************  Make New Directory  *********************
@@ -175,7 +200,7 @@ int rename_action(string args)
 }
 
 //  **************************  Make New File ***********************
-int createfile_action(string args)
+int makefile_action(string args)
 {
     ofstream file;
     string name;
@@ -210,6 +235,26 @@ int copy_action(string args)
     cout << "File copied successfully";
 }
 
+// ***********************  Check for a files existence ********************
+int exists_action(string args)
+{
+    string path;
+    cin >> path;
+    int check = access(path.c_str(), F_OK);
+    if (!check)
+        cout << "File/Folder Exists on your FileSystem\n";
+    else
+        cout << "NO SUCH File/Folder on your FileSystem\n";
+}
+
+// **************************  ECHO    *********************
+int echo_action(string args)
+{
+    string text;
+    cin >> text;
+    cout << text << "\n";
+}
+
 // ***************************  Read through the contents of the file  **********************
 int read_action(string args)
 {
@@ -224,18 +269,38 @@ int read_action(string args)
         cout << word << " ";
 }
 
-// ***********************  Check for a files existence ********************
-int exists_action(string args)
-{
-    string path;
-    cin >> path;
-    int check = access(path.c_str(), F_OK);
-    if (!check)
-        cout << "File/Folder Exists on your FileSystem\n";
-    else
-        cout << "NO SUCH File/Folder on your FileSystem\n";
-}
+// **************************** SORT ********************************
 
+int sort_action(string args)
+{
+    string filename;
+    cout << "Enter the name of the file to sort: ";
+    cin >> filename;
+
+    ifstream file(filename);
+    if (!file)
+    {
+        cerr << "Failed to open file: " << filename << endl;
+        return 1;
+    }
+
+    // Read the lines from the file into a vector
+    vector<string> lines;
+    string line;
+    while (getline(file, line))
+    {
+        lines.push_back(line);
+    }
+
+    sort(lines.begin(), lines.end());
+
+    for (const auto &sortedLine : lines)
+    {
+        cout << sortedLine << endl;
+    }
+
+    return 0;
+}
 // **************************  Day, Date, Time **************************
 int time_action(string args)
 {
@@ -248,6 +313,19 @@ int time_action(string args)
          << asctime(ti);
 }
 
+//  *************************** Command History *****************************
+vector<string> commandHistory;
+
+int history_action(string args)
+{
+    cout << "Command History:\n";
+    for (size_t i = 0; i < commandHistory.size(); i++)
+    {
+        cout << i + 1 << ": " << commandHistory[i] << "\n";
+    }
+    return 0;
+}
+
 // **************************  Clear Terminal ***********************
 int clear_action(string args)
 {
@@ -257,27 +335,30 @@ int clear_action(string args)
 // **************************  Commands List/ HELP  ***********************
 int help_action(string args)
 {
-    cout << "J_pwd    => The Current Working Directory \n";
-    cout << "J_ls     => List of Sub Directories in the Current directory \n";
-    cout << "J_lstype => To print the list of based on Folder, Files or Links\n";
-    cout << "J_cd     => To Change the Current Working Directory \n";
-    cout << "J_echo   => To print text to the terminal window \n";
-    cout << "J_mkdir  => To Make a new Directory \n";
-    cout << "J_rmdir  => To Remove a particular Directory \n";
-    cout << "J_rename => To Rename a directory \n";
-    cout << "J_mkfile => To Make a New File (txt, cpp, py, xls, pptx, pdf etcccc.)\n";
-    cout << "J_rmfile => To Delete a File \n";
-    cout << "J_mv     => To move a directory from one location to another \n";
-    cout << "J_read   => To Read each and every word from a file\n";
-    cout << "J_exist  => To check if a particular file or folder Exits \n";
-    // cout << "J_memory => To check the Current Memory and the Peak Memory \n";
-    cout << "J_time   => To Display current Day, Date and Time \n";
-    cout << "J_clear => To Clear the Terminal \n";
+    cout << "J_pwd     ---->  The Current Working Directory \n";
+    cout << "J_ls      ---->  List of Sub Directories in the Current directory \n";
+    cout << "J_cd      ---->  To Change the Current Working Directory \n";
+    cout << "J_lstype  ---->  To print the list of based on Folder, Files or Links\n";
+    cout << "J_memory  ---->  To display memory\n";
+    cout << "J_mkdir   ---->  To Make a new Directory \n";
+    cout << "J_rmdir   ---->  To Remove a particular Directory \n";
+    cout << "J_rename  ---->  To Rename a directory \n";
+    cout << "J_mkfile  ---->  To Make a New File (.txt, .cpp, .py, .xls, .pptx, .pdf etcccc.)\n";
+    cout << "J_rmfile  ---->  To Delete a File \n";
+    cout << "J_copy    ---->  To Copy the contents of a File at other location\n";
+    cout << "J_exist   ---->  To check if a particular file or folder Exits \n";
+    cout << "J_echo    ---->  To print text to the terminal window \n";
+    cout << "J_read    ---->  To Read each and every word from a file\n";
+    cout << "J_sort    ---->  To sort the content of the file in Lexicographical order\n";
+    cout << "J_time    ---->  To Display current Day, Date and Time \n";
+    cout << "J_history ---->  To display the history\n";
+    cout << "J_clear   ---->  To Clear the Terminal \n";
 }
 
 int main()
 {
     cout << endl;
+
     cout << "------------------        ---------\n";
     cout << "         |                |       |\n";
     cout << "         |                |\n";
@@ -293,34 +374,39 @@ int main()
     cout << "---------------------------------------\n";
     commands["J_pwd"] = pwd_action;
     commands["J_ls"] = ls_action;
-    commands["J_lstype"] = ls_type_action;
     commands["J_cd"] = cd_action;
-    commands["J_echo"] = echo_action;
+    commands["J_lstype"] = ls_type_action;
+    commands["J_memory"] = memory_action;
     commands["J_mkdir"] = mkdir_action;
     commands["J_rmdir"] = rmdir_action;
     commands["J_rename"] = rename_action;
-    commands["J_mkfile"] = createfile_action;
+    commands["J_mkfile"] = makefile_action;
     commands["J_rmfile"] = removefile_action;
     commands["J_copy"] = copy_action;
-    commands["J_read"] = read_action;
     commands["J_exist"] = exists_action;
-    // commands["J_memory"] = memory_action;
+    commands["J_echo"] = echo_action;
+    commands["J_read"] = read_action;
+    commands["J_sort"] = sort_action;
     commands["J_time"] = time_action;
+    commands["J_history"] = history_action;
     commands["J_clear"] = clear_action;
     commands["J_help"] = help_action;
     while (true)
     {
         string cmd;
-        cout << "> ";
+        cout << "*_* ";
         cin >> cmd;
         if (cmd == "exit")
             break;
         else
         {
             if (commands.find(cmd) != commands.end())
+            {
+                commandHistory.push_back(cmd); // Add command to history before executing it
                 commands[cmd]("");
+            }
             else
-                cout << "No Such Command in the J_Shell, Many more commands to come soon\n";
+                cout << "Unrecognized Command :(\nMore commands to be added soon :D\n";
         }
     }
     return 0;
