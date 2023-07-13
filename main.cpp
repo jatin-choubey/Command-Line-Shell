@@ -351,7 +351,7 @@ int help_action(string args)
     cout << "J_read    ---->  To Read each and every word from a file\n";
     cout << "J_sort    ---->  To sort the content of the file in Lexicographical order\n";
     cout << "J_time    ---->  To Display current Day, Date and Time \n";
-    cout << "J_history ---->  To display the history\n";
+    cout << "J_history ---->  To display the history of the commands.\n";
     cout << "J_clear   ---->  To Clear the Terminal \n";
 }
 
