@@ -8,7 +8,7 @@
 🔑 J_ls &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List of Sub Directories in the Current directory  
 🔑 J_cd &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To Change the Current Working Directory  
 🔑 J_lstype &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To display the list of items of sepcific type  
-🔑 J_memory &nbsp;&nbsp;To get the Total, Current and Avaiable Memory of the System  
+🔑 J_memory &nbsp;&nbsp;To get the Total, Used and Avaiable Memory of the System  
 🔑 J_mkdir &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To Make a new Directory  
 🔑 J_rmdir &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To Remove a particular Directory  
 🔑 J_rename &nbsp;&nbsp;&nbsp;To Rename a directory  
