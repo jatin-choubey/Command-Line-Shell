@@ -32,7 +32,6 @@
 #include <limits.h>
 #include <ios>
 #include <vector>
-#include <process.h>
 #include <ctime>
 #include <iomanip>
 using namespace std;
