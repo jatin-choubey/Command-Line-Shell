@@ -58,7 +58,7 @@ int ls_action(string args)
 {
     DIR *dr;
     struct dirent *en;
-    dr = opendir("."); // single dot to open the current directory.
+    dr = opendir("."); // Single Dot to open the current directory.
     cout << setw(36) << "NAME";
     cout << "                 Creation date                  Modification Date\n";
     cout << setw(40) << "-------------";
