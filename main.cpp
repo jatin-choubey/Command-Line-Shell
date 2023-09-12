@@ -27,6 +27,7 @@
 #include <map>
 #include <dirent.h>
 #include <iostream>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <limits.h>
@@ -35,10 +36,6 @@
 #include <ctime>
 #include <iomanip>
 using namespace std;
-
-typedef int (*action)(string);
-// command , task
-map<string, action> commands;
 
 // **************************  Present Working Directory  *************************
 int pwd_action(string args)
@@ -354,19 +351,38 @@ int help_action(string args)
     cout << "J_clear   ---->  To Clear the Terminal \n";
 }
 
+// Function to execute a command and return its output
+std::string executeCommand(const std::string &cmd)
+{
+    char buffer[128];
+    std::string result = "";
+
+    FILE *pipe = _popen(cmd.c_str(), "r");
+    if (!pipe)
+    {
+        return "Error: Unable to open pipe.";
+    }
+
+    while (!feof(pipe))
+    {
+        if (fgets(buffer, 128, pipe) != nullptr)
+        {
+            result += buffer;
+        }
+    }
+
+    _pclose(pipe);
+
+    return result;
+}
+typedef int (*action)(string);
+
+// Mapping the commands with the functions
+// command , task
+map<string, action> commands;
 int main()
 {
     cout << endl;
-
-    // cout << "------------------        ---------\n";
-    // cout << "         |                |       |\n";
-    // cout << "         |                |\n";
-    // cout << "         |                |\n";
-    // cout << "         |                `--------\n";
-    // cout << "|        |                        |\n";
-    // cout << "|        |                        |\n";
-    // cout << "|        |                |       |\n";
-    // cout << "`--------`   ----------   `-------`\n\n";
 
     cout << "     ^__^\n";
     cout << "     (OO)\\__________\n";
@@ -399,10 +415,41 @@ int main()
     while (true)
     {
         string cmd;
-        cout << "*_* ";
+        cout << ":) ";
         cin >> cmd;
         if (cmd == "exit")
             break;
+        else if (cmd.find('|') != std::string::npos) // Checking if Pipe is present ?
+        {
+            cout << "PIPE\n";
+            vector<string> pipedCommands;
+            string currentCmd = "";
+            for (int i = 0; i < cmd.size(); i++)
+            {
+                if (cmd[i] == '|')
+                {
+                    pipedCommands.push_back(currentCmd);
+                    currentCmd = "";
+                    continue;
+                }
+                currentCmd += cmd[i];
+            }
+            pipedCommands.push_back(currentCmd);
+
+            // At this point, all the commands which are connected via a pipe '|' are present inside the pipedCommands vector.
+            // Now how do I apply pipe on the available commands inside the pipedCommands vector ?
+            // For example "J_ls|J_sort". When we run this command, our pipedCommands vector will be storing {"J_ls", "J_sort"}.
+            // From here, i want to pass the output of the J_ls command as an input to the J_sort command. (Actual functionality of the pipe)
+
+            // Execute the commands in the pipeline and pass the output of one as input to the next
+            std::string input = pipedCommands[0]; // Initialize input with the first command
+            for (int i = 1; i < pipedCommands.size(); i++)
+            {
+                std::string output = executeCommand(pipedCommands[i] + " " + input); // Pass input to the command
+                std::cout << output;
+                input = output;
+            }
+        }
         else
         {
             if (commands.find(cmd) != commands.end())
