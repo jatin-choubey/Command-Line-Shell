@@ -99,9 +99,9 @@ int ls_type_action(string args)
     int type;
     if (dr_type == "folder")
         type = 16;
-    else if (dr_type == "file")
-        type = 24;
     else if (dr_type == "link")
+        type = 24;
+    else if (dr_type == "file")
         type = 0;
     else
         perror("No Such Type");
